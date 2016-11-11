@@ -1,4 +1,5 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, HttpResponseRedirect
+from django.core.urlresolvers import reverse
 from .models import Album
 
 # Create your views here.
@@ -25,4 +26,4 @@ def favorite(request, album_id):
 	else:
 		selected_song.is_favorite = True
 		selected_song.save()
-		return render(request, 'music/detail.html', {'album': album})
+		return HttpResponseRedirect(reverse('music:detail', args=album_id))
