@@ -1,29 +1,18 @@
-from django.shortcuts import render, get_object_or_404, HttpResponseRedirect
-from django.core.urlresolvers import reverse
+from django.shortcuts import render
+from django.views import generic
 from .models import Album
 
 # Create your views here.
 
+class IndexView(generic.ListView):
+	"""docstring for IndexView"""
+	template_name = "music/index.html"
 
-def index(request):
-	all_albums = Album.objects.all()
-	return render(request, 'music/index.html', {'all_albums': all_albums,}) 
+	def get_queryset(self):
+		return Album.objects.all()
 
-def detail(request, album_id):
-	#album = Album.objects.get(id=album_id)
-	album = get_object_or_404(Album, id=album_id)
-	return render(request, 'music/detail.html', {'album': album})
-
-def favorite(request, album_id):
-	album = get_object_or_404(Album, id=album_id)
-	try:
-		selected_song = album.song_set.get(id=request.POST['song'])
-	except (KeyError, Song.DoesNotExist):
-		return render(request, 'music/detail.html',{
-			'album': album,
-			'error_message': "You did not select a valid song"
-		})
-	else:
-		selected_song.is_favorite = True
-		selected_song.save()
-		return HttpResponseRedirect(reverse('music:detail', args=album_id))
+class DetailView(generic.DetailView):
+		"""docstring for DetailView"""
+		model = Album
+		template_name = "music/detail.html"
+				
